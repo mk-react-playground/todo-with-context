@@ -9,13 +9,10 @@ class TodoProvider extends Component {
         super(props);
 
         const { change, create, keyPress } = this;
-        this.actions = {
-            change, keyPress, create
-        };
     }
 
     state = {
-        id: 3,
+        id: 2,
         input: '',
         todos: [
             { id: 0, text: 'context API Study', checked: false },
@@ -32,16 +29,17 @@ class TodoProvider extends Component {
     }
 
     create = () => {
-        const { input, todos } = this.state;
+        const { input, todos, id } = this.state;
         
         this.setState({
             input: '',
+            id: id + 1,
             todos: todos.concat({
-                id: this.id++,
+                id: id + 1,
                 text: input,
                 checked: false,
-            })
-        })
+            }),
+        });
     }
 
     keyPress = (e) => {
@@ -50,9 +48,34 @@ class TodoProvider extends Component {
         }
     }
 
+    remove = (removeId) => {
+        const { todos, id } = this.state;
+
+        this.setState({
+            todos: todos.filter(todo => todo.id !== removeId),
+            id: id - 1,
+        })
+    }
+
+    toggle = (id) => {
+        const { todos } = this.state;
+        const copy = todos.concat();
+        const fixed = copy.map(todo => {
+            if ( todo.id === id ) {
+                todo.checked = !todo.checked;
+            }
+            return todo;
+        });
+
+        this.setState({
+            todos: fixed,
+        })
+    }
+
 
     render() {
-        const { state, actions } = this;
+        const { state, change, keyPress, create, remove, toggle } = this;
+        const actions = { change, keyPress, create, remove, toggle };
         const value = { state, actions };
 
         return (
